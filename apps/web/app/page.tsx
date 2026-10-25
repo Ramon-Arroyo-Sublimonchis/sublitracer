@@ -1,12 +1,10 @@
 import { ShieldCheck } from "lucide-react";
 import Image from "next/image";
 
-import { AdSlot } from "@/components/ads/ad-slot";
 import { HomeSections } from "@/components/home/home-sections";
 import { SiteFooter } from "@/components/home/site-footer";
 import { TracerPlayground } from "@/components/tracer-playground";
 import { buildHomeJsonLd } from "@/lib/seo/schema";
-import { AD_SLOTS } from "@/lib/site";
 
 export default function HomePage() {
   return (
@@ -17,7 +15,7 @@ export default function HomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(buildHomeJsonLd()) }}
       />
       <header className="border-b bg-card/60 backdrop-blur">
-        <div className="mx-auto flex h-14 max-w-6xl items-center gap-2.5 px-4 xl:max-w-7xl">
+        <div className="mx-auto flex h-14 max-w-6xl items-center gap-2.5 px-4">
           <Image
             src="/brand/el-mundo-laser-96.png"
             alt=""
@@ -33,8 +31,9 @@ export default function HomePage() {
         </div>
       </header>
 
-      {/* Desde xl, una columna lateral de 300 px para el rascacielos; debajo, sin cambios. */}
-      <div className="mx-auto max-w-6xl px-4 py-10 xl:grid xl:max-w-7xl xl:grid-cols-[minmax(0,1fr)_300px] xl:gap-8">
+      {/* Ancho máximo de 1152 px: en pantallas anchas deja márgenes libres para los anuncios
+          laterales automáticos de AdSense. */}
+      <div className="mx-auto max-w-6xl px-4 py-10">
         <main className="flex min-w-0 flex-col gap-8">
           <section className="flex flex-col gap-3 text-center">
             <h1 className="text-balance text-3xl font-bold tracking-tight sm:text-4xl">
@@ -53,10 +52,6 @@ export default function HomePage() {
           <TracerPlayground />
           <HomeSections />
         </main>
-
-        <div className="hidden xl:block">
-          <AdSlot slot={AD_SLOTS.rail} format="vertical" />
-        </div>
       </div>
 
       <SiteFooter />

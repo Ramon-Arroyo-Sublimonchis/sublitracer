@@ -77,10 +77,11 @@ export const AD_CLIENT = "ca-pub-9446390749680019";
 
 /**
  * Bloques de AdSense por ubicación. Hoy comparten el bloque del proyecto LightBurn to SVG;
- * conviene crear uno por ubicación en AdSense para medir cada una por separado.
+ * conviene crear uno por ubicación en AdSense para medir cada una por separado. Los laterales
+ * no son bloques manuales: los pone el formato "Anuncios laterales" de los anuncios automáticos
+ * en los márgenes que deja el contenido.
  */
 export const AD_SLOTS = {
-  rail: "7636974134",
   belowDownload: "7636974134",
   inArticle: "7636974134",
 } as const;

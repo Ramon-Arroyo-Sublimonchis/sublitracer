@@ -11,7 +11,7 @@ const FOOTER_LINKS = [
 export function SiteFooter() {
   return (
     <footer className="mt-16 border-t bg-card/60">
-      <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-8 text-sm text-muted-foreground xl:max-w-7xl">
+      <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-8 text-sm text-muted-foreground">
         <p>
           <span className="font-medium text-foreground">Sublitracer</span> es una herramienta
           gratuita de El Mundo Láser by Sublimonchis, creada por {AUTHOR_DISPLAY_NAME}.
