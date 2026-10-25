@@ -1,0 +1,16 @@
+{
+  "name": "@sublitracer/tracer-wasm",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./pkg/tracer_wasm.js",
+  "types": "./pkg/tracer_wasm.d.ts",
+  "files": [
+    "pkg"
+  ],
+  "scripts": {
+    "build": "node ../../scripts/build-wasm.mjs",
+    "build:dev": "node ../../scripts/build-wasm.mjs --dev",
+    "test": "cargo test"
+  }
+}

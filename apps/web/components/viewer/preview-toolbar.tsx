@@ -1,0 +1,109 @@
+"use client";
+
+import { Download, Maximize, ZoomIn, ZoomOut } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+
+export type PreviewMode = "compare" | "vector" | "outlines";
+
+const MODES: { id: PreviewMode; label: string; title: string }[] = [
+  { id: "compare", label: "Comparar", title: "Original y vector lado a lado" },
+  { id: "vector", label: "Vector", title: "Solo el resultado vectorial" },
+  { id: "outlines", label: "Contornos", title: "Solo las líneas de cada forma" },
+];
+
+interface PreviewToolbarProps {
+  mode: PreviewMode;
+  onModeChange: (mode: PreviewMode) => void;
+  /** Mientras no hay vector, solo se puede ver el original. */
+  hasVector: boolean;
+  zoom: number;
+  canZoomIn: boolean;
+  canZoomOut: boolean;
+  onZoomIn: () => void;
+  onZoomOut: () => void;
+  onFit: () => void;
+  onActualSize: () => void;
+  onDownload: () => void;
+}
+
+export function PreviewToolbar(props: PreviewToolbarProps) {
+  const { mode, hasVector } = props;
+
+  return (
+    <div
+      role="toolbar"
+      aria-label="Previsualización"
+      className="flex flex-wrap items-center gap-x-4 gap-y-2 border-b bg-card px-3 py-2"
+    >
+      <div className="flex gap-2">
+        {MODES.map(({ id, label, title }) => {
+          const active = id === mode;
+          return (
+            <button
+              key={id}
+              type="button"
+              title={title}
+              aria-pressed={active}
+              disabled={!hasVector && id !== "compare"}
+              onClick={() => props.onModeChange(id)}
+              className={cn(
+                "h-9 rounded-lg border bg-background px-3 text-sm font-medium transition-colors sm:px-4",
+                "outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50",
+                active
+                  ? "border-primary bg-accent text-primary ring-2 ring-primary/25"
+                  : "hover:border-primary/40 hover:bg-accent/40",
+              )}
+            >
+              {label}
+            </button>
+          );
+        })}
+      </div>
+
+      <div className="flex items-center gap-1">
+        <IconButton title="Alejar (−)" onClick={props.onZoomOut} disabled={!props.canZoomOut}>
+          <ZoomOut />
+        </IconButton>
+        <IconButton title="Acercar (+)" onClick={props.onZoomIn} disabled={!props.canZoomIn}>
+          <ZoomIn />
+        </IconButton>
+        <IconButton title="Ajustar a la vista (0)" onClick={props.onFit}>
+          <Maximize />
+        </IconButton>
+        <IconButton title="Tamaño real 1:1 (1)" onClick={props.onActualSize}>
+          <span className="rounded-[3px] border-[1.5px] border-current px-0.5 text-[10px] leading-3.5 font-semibold">
+            1:1
+          </span>
+        </IconButton>
+        <span className="hidden w-14 text-right text-xs tabular-nums text-muted-foreground sm:inline">
+          {Math.round(props.zoom * 100)} %
+        </span>
+      </div>
+
+      <Button className="ml-auto" onClick={props.onDownload} disabled={!hasVector}>
+        <Download /> Descargar
+      </Button>
+    </div>
+  );
+}
+
+function IconButton({
+  title,
+  children,
+  ...props
+}: { title: string; children: React.ReactNode } & React.ComponentProps<"button">) {
+  return (
+    <Button
+      variant="ghost"
+      size="icon"
+      title={title}
+      aria-label={title}
+      className="text-primary hover:text-primary [&_svg:not([class*='size-'])]:size-5"
+      {...props}
+    >
+      {children}
+    </Button>
+  );
+}

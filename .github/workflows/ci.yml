@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: packages/tracer-wasm
+
+      - name: Instalar wasm-pack
+        run: curl -sSf https://rustwasm.github.io/wasm-pack/installer/init.sh | sh
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Pruebas del motor (Rust)
+        run: cargo test --manifest-path packages/tracer-wasm/Cargo.toml
+
+      - name: Compilar WASM
+        run: pnpm build:wasm
+
+      - name: Pruebas de exportación (SVG, PDF, EPS, DXF)
+        run: pnpm --filter @sublitracer/vector-export test
+
+      - name: Pruebas del visor (zoom)
+        run: pnpm --filter web test
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Tipos
+        run: pnpm --filter web typecheck
+
+      - name: Build estático
+        run: pnpm --filter web build

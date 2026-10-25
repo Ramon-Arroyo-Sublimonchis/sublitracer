@@ -1,0 +1,10 @@
+node_modules/
+.next/
+out/
+target/
+pkg/
+*.tsbuildinfo
+next-env.d.ts
+.env*.local
+.DS_Store
+bench-out/
