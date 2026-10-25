@@ -4,9 +4,11 @@ import { parseTracedSvg, type VectorDocument } from "@sublitracer/vector-export"
 import { ImageUp } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
+import { AdSlot } from "@/components/ads/ad-slot";
 import { DownloadPanel } from "@/components/export/download-panel";
 import { PreviewViewer } from "@/components/viewer/preview-viewer";
 import { ACCEPTED_MIME_TYPES, validateImageFile } from "@/lib/image-format";
+import { AD_SLOTS } from "@/lib/site";
 import { TracerClient } from "@/lib/tracer-client";
 import type { TraceOutput } from "@/lib/tracer-types";
 import { cn } from "@/lib/utils";
@@ -35,6 +37,8 @@ const DOWNLOAD_BUTTON_ID = "download-button";
 export function TracerPlayground() {
   const [state, setState] = useState<State>({ status: "idle" });
   const [dragging, setDragging] = useState(false);
+  /** El anuncio bajo la descarga aparece con el primer resultado y queda montado. */
+  const [hasResult, setHasResult] = useState(false);
   const clientRef = useRef<TracerClient | null>(null);
   const urlsRef = useRef<string[]>([]);
 
@@ -78,6 +82,7 @@ export function TracerPlayground() {
           fileName: file instanceof File ? file.name : "imagen",
           tracedAt: Date.now(),
         });
+        setHasResult(true);
       } catch (error) {
         setState({
           status: "error",
@@ -201,6 +206,11 @@ export function TracerPlayground() {
             buttonId={DOWNLOAD_BUTTON_ID}
           />
         </>
+      )}
+
+      {hasResult && (
+        // Separación amplia (40 px) del botón de descarga para evitar clics accidentales.
+        <AdSlot slot={AD_SLOTS.belowDownload} format="rectangle" className="mt-10" />
       )}
     </div>
   );

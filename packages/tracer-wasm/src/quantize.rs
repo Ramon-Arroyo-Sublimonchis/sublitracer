@@ -8,6 +8,8 @@ pub const TRANSPARENT: u16 = u16::MAX;
 
 const MAX_SAMPLES: usize = 40_000;
 const LLOYD_ITERATIONS: usize = 12;
+/// Distancia OKLab a partir de la cual una muestra es claramente de otro color.
+const DISTINCT: f32 = 0.15;
 
 pub struct PaletteSettings {
     /// `Some(k)`: exactamente `k` colores (si la imagen los tiene). `None`: automático.
@@ -110,10 +112,15 @@ pub fn build_palette(img: &LabImage, settings: &PaletteSettings) -> Vec<Lab> {
     let mut centers = vec![first];
     let mut dist: Vec<f32> = samples.iter().map(|s| dist2(s, &first)).collect();
 
+    // Un color minoritario pero muy distinto (un texto, unos puntos) puede ocupar menos del
+    // 5 % de la imagen y no pesar en el percentil 95: se sigue agregando colores mientras
+    // quede un grupo apreciable de muestras claramente lejos de toda la paleta.
+    let distinct_min = (samples.len() / 500).max(8);
     while centers.len() < max {
         if target.is_none() {
             let mut d: Vec<f32> = dist.iter().map(|d| d.sqrt()).collect();
-            if p95(&mut d) <= settings.auto_error {
+            let distinct = d.iter().filter(|&&v| v > DISTINCT).count();
+            if p95(&mut d) <= settings.auto_error && distinct < distinct_min {
                 break;
             }
         }
@@ -207,6 +214,26 @@ mod tests {
             "{} colores",
             palette.len()
         );
+    }
+
+    #[test]
+    fn auto_palette_keeps_a_small_but_distinct_colour() {
+        // Disco rosa con un "texto" blanco que ocupa ~3 % del área.
+        let (w, h) = (120, 120);
+        let mut px = Vec::new();
+        for y in 0..h {
+            for x in 0..w {
+                let text = (52..68).contains(&x) && (40..80).contains(&y) && x % 4 != 0;
+                let c = if text {
+                    [255, 255, 255]
+                } else {
+                    [236, 72, 153]
+                };
+                px.extend_from_slice(&[c[0], c[1], c[2], 255]);
+            }
+        }
+        let img = to_lab_image(&px, w, h, 128);
+        assert_eq!(build_palette(&img, &auto()).len(), 2);
     }
 
     #[test]

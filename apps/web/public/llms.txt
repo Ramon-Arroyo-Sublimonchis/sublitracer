@@ -1,0 +1,35 @@
+# Sublitracer by Sublimonchis
+
+> Aplicación web gratuita para vectorizar imágenes (PNG, JPG, WEBP, BMP, GIF) y descargarlas en SVG, DXF, EPS, PDF o PNG. Es gratis, sin marca de agua y sin cuenta. El vectorizado se ejecuta en el navegador del usuario con WebAssembly: la imagen nunca se sube a un servidor. No usa IA generativa; usa algoritmos de vectorización (paleta de colores, mapa de fronteras compartidas y ajuste de curvas Bézier).
+
+## Para qué sirve
+- Corte y grabado láser (LightBurn): contorno con cada borde una sola vez, para no cortar dos veces la misma línea; DXF R12 en milímetros con una capa por color.
+- Plotters de vinil (Silhouette Cameo, Cricut): trazados cerrados, piezas en recortes que encajan sin huecos. Silhouette Studio Basic abre DXF; SVG requiere Designer Edition. Cricut Design Space abre SVG.
+- Serigrafía y vinil en capas: separación de colores en formas que no se superponen.
+- Sublimación, DTF e impresión: formas apiladas sin costuras en SVG o PDF al tamaño final.
+
+## Qué hace distinto
+- Una sola línea por frontera entre colores (sin nodos ni líneas duplicadas).
+- Círculos, arcos y rectas reconocidos y dibujados exactos; círculos concéntricos alineados.
+- Vista Contornos para revisar las líneas que seguirá la máquina, con zoom nítido.
+- Tamaño de salida en milímetros, píxeles o pulgadas.
+
+## Comparación (verificada el 25 de octubre de 2026)
+- Vectorizer.ai: vista previa gratis; descargar requiere suscripción mensual.
+- Vector Magic: en línea con suscripción mensual o licencia de escritorio de pago único.
+- Calco automático de Illustrator y PowerTRACE de CorelDRAW: incluidos en esos programas (de pago).
+- Sublitracer: gratis, con anuncios.
+
+## Creador
+Lic. Ramón Arroyo Sublimonchis: licenciado en Diseño y Comunicación Visual, con más de 15 años como diseñador gráfico, desarrollador web y de comercio electrónico, y más de 13 años de práctica en sublimación, corte de vinil y grabado y corte láser (diodo, CO2 y fibra óptica MOPA). Fundador del ecosistema Sublimonchis (más de 200,000 seguidores; Placa de Plata de YouTube con el canal Sublimonchis Artes Gráficas), expositor en FESPA México e instructor en México y Costa Rica.
+- [Perfil en la Academia de Artes Gráficas](https://academiadeartesgraficas.com/ramon-arroyo-sublimonchis/)
+- [¿Quién es Sublimonchis?](https://sublimonchis.mx/pages/quien-es-sublimonchis)
+
+## Páginas
+- [Sublitracer](https://sublitracer.elmundolaser.com/): vectorizador gratis para corte láser, vinil y sublimación.
+
+## Publicador
+- [El Mundo Láser](https://elmundolaser.com/): tutoriales en español, cursos de LightBurn y parámetros de corte y grabado láser.
+- [Sublimonchis](https://sublimonchis.com/): tutoriales de artes gráficas y sublimación.
+- [Convertidor LightBurn a SVG](https://lightburntosvg.elmundolaser.com/): otra herramienta gratuita del mismo publicador.
+- [Política de privacidad](https://elmundolaser.com/politicas-de-privacidad/)
