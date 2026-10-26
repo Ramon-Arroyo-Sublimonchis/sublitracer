@@ -14,7 +14,8 @@
     "typecheck": "pnpm -r typecheck",
     "lint": "biome check .",
     "format": "biome check --write .",
-    "bench:trace": "node scripts/bench-trace.mjs"
+    "bench:trace": "node scripts/bench-trace.mjs",
+    "deploy:zip": "pnpm build && node scripts/package-deploy.mjs"
   },
   "devDependencies": {
     "@biomejs/biome": "2.6.3",
