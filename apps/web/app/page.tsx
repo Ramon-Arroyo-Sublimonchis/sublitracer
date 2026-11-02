@@ -6,7 +6,7 @@ import { HomeSections } from "@/components/home/home-sections";
 import { SiteFooter } from "@/components/home/site-footer";
 import { TracerPlayground } from "@/components/tracer-playground";
 import { buildHomeJsonLd } from "@/lib/seo/schema";
-import { AD_SLOTS, SITE_SHORT_NAME } from "@/lib/site";
+import { AD_SLOTS, LINKS, SITE_SHORT_NAME } from "@/lib/site";
 
 export default function HomePage() {
   return (
@@ -17,19 +17,25 @@ export default function HomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(buildHomeJsonLd()) }}
       />
       <header className="border-b bg-card/60 backdrop-blur">
-        <div className="mx-auto flex h-14 max-w-6xl items-center gap-2.5 px-4">
-          <Image
-            src="/brand/el-mundo-laser-96.png"
-            alt=""
-            width={40}
-            height={40}
-            priority
-            className="size-10 shrink-0 object-contain"
-          />
-          <span className="truncate text-lg font-semibold tracking-tight">
-            {SITE_SHORT_NAME} <span className="font-normal text-muted-foreground">by</span>{" "}
-            <span className="text-primary">Sublimonchis</span>
-          </span>
+        <div className="mx-auto flex h-14 max-w-6xl items-center px-4">
+          <a
+            href={LINKS.mainSite}
+            title="Ir a El Mundo Láser"
+            className="flex min-w-0 items-center gap-2.5 rounded-md outline-none hover:opacity-80 focus-visible:ring-[3px] focus-visible:ring-ring/50"
+          >
+            <Image
+              src="/brand/el-mundo-laser-96.png"
+              alt=""
+              width={40}
+              height={40}
+              priority
+              className="size-10 shrink-0 object-contain"
+            />
+            <span className="truncate text-lg font-semibold tracking-tight">
+              {SITE_SHORT_NAME} <span className="font-normal text-muted-foreground">by</span>{" "}
+              <span className="text-primary">Sublimonchis</span>
+            </span>
+          </a>
         </div>
       </header>
 
