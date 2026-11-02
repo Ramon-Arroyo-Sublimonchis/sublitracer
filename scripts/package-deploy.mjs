@@ -1,6 +1,6 @@
 // Empaqueta el sitio estático para subirlo a SiteGround (u otro hosting estático).
 // Uso: `pnpm deploy:zip` (compila antes) o `node scripts/package-deploy.mjs` con out/ ya generado.
-// Resultado: deploy/sublitracer-<fecha>.zip con el CONTENIDO de apps/web/out en la raíz,
+// Resultado: deploy/vectorizaria-<fecha>.zip con el CONTENIDO de apps/web/out en la raíz,
 // listo para descomprimir dentro de public_html del subdominio.
 import { execFileSync } from "node:child_process";
 import { existsSync, mkdirSync, readdirSync, rmSync } from "node:fs";
@@ -26,7 +26,7 @@ const now = new Date();
 const pad = (n) => String(n).padStart(2, "0");
 const stamp = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}-${pad(now.getHours())}${pad(now.getMinutes())}`;
 const dir = join(root, "deploy");
-const zip = join(dir, `sublitracer-${stamp}.zip`);
+const zip = join(dir, `vectorizaria-${stamp}.zip`);
 mkdirSync(dir, { recursive: true });
 rmSync(zip, { force: true });
 

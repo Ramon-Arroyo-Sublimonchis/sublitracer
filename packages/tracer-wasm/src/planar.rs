@@ -254,7 +254,7 @@ pub fn trace(labels: &[u16], w: usize, h: usize, scale: usize, s: &PlanarSetting
     let hidden = |l: u16| l == TRANSPARENT || s.hidden.contains(&l);
     let (ow, oh) = (w / scale, h / scale);
     let header = format!(
-        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!-- Generado con Sublitracer by Sublimonchis -->\n<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" width=\"{ow}\" height=\"{oh}\" viewBox=\"0 0 {ow} {oh}\">\n"
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!-- Generado con VectorizarIA by Sublimonchis -->\n<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" width=\"{ow}\" height=\"{oh}\" viewBox=\"0 0 {ow} {oh}\">\n"
     );
 
     // ---------- Contorno: cada frontera una sola vez ----------

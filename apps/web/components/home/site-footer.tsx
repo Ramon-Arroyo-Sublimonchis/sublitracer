@@ -1,4 +1,4 @@
-import { AUTHOR_DISPLAY_NAME, LINKS } from "@/lib/site";
+import { AUTHOR_DISPLAY_NAME, LINKS, SITE_SHORT_NAME } from "@/lib/site";
 
 const FOOTER_LINKS = [
   { label: "El Mundo Láser", url: LINKS.mainSite },
@@ -13,7 +13,7 @@ export function SiteFooter() {
     <footer className="mt-16 border-t bg-card/60">
       <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-8 text-sm text-muted-foreground">
         <p>
-          <span className="font-medium text-foreground">Sublitracer</span> es una herramienta
+          <span className="font-medium text-foreground">{SITE_SHORT_NAME}</span> es una herramienta
           gratuita de El Mundo Láser by Sublimonchis, creada por {AUTHOR_DISPLAY_NAME}.
         </p>
         <nav aria-label="Sitios y enlaces" className="flex flex-wrap gap-x-5 gap-y-2">

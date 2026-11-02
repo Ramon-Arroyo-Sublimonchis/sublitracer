@@ -5,6 +5,7 @@ import { HomeSections } from "@/components/home/home-sections";
 import { SiteFooter } from "@/components/home/site-footer";
 import { TracerPlayground } from "@/components/tracer-playground";
 import { buildHomeJsonLd } from "@/lib/seo/schema";
+import { SITE_SHORT_NAME } from "@/lib/site";
 
 export default function HomePage() {
   return (
@@ -25,7 +26,7 @@ export default function HomePage() {
             className="size-10 shrink-0 object-contain"
           />
           <span className="truncate text-lg font-semibold tracking-tight">
-            Sublitracer <span className="font-normal text-muted-foreground">by</span>{" "}
+            {SITE_SHORT_NAME} <span className="font-normal text-muted-foreground">by</span>{" "}
             <span className="text-primary">Sublimonchis</span>
           </span>
         </div>

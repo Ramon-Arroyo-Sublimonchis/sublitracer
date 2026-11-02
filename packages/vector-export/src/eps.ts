@@ -12,7 +12,7 @@ export function toEps(doc: VectorDocument, options: ExportOptions = {}): string 
 
   const out = [
     "%!PS-Adobe-3.0 EPSF-3.0",
-    "%%Creator: Sublitracer by Sublimonchis",
+    "%%Creator: VectorizarIA by Sublimonchis",
     `%%BoundingBox: 0 0 ${Math.ceil(pageW)} ${Math.ceil(pageH)}`,
     `%%HiResBoundingBox: 0 0 ${fmt(pageW)} ${fmt(pageH)}`,
     "%%LanguageLevel: 2",

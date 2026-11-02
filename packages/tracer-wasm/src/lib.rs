@@ -1,4 +1,4 @@
-//! Motor de vectorización de Sublitracer by Sublimonchis.
+//! Motor de vectorización de VectorizarIA by Sublimonchis.
 
 mod color;
 mod config;

@@ -1,8 +1,18 @@
 import { FAQ, FEATURES } from "@/lib/content/home";
-import { AUTHOR, LINKS, SAME_AS, SITE_DESCRIPTION, SITE_NAME, SITE_ORIGIN } from "@/lib/site";
+import {
+  AUTHOR,
+  LINKS,
+  SAME_AS,
+  SITE_DESCRIPTION,
+  SITE_NAME,
+  SITE_ORIGIN,
+  SITE_SHORT_NAME,
+} from "@/lib/site";
 
 const HOME = `${SITE_ORIGIN}/`;
 const id = (name: string) => `${HOME}#${name}`;
+/** Otras formas de escribir la marca, para que Google y los LLM las asocien al sitio. */
+const ALTERNATE_NAMES = [SITE_SHORT_NAME, "Vectorizar IA"];
 
 /**
  * JSON-LD de la página de inicio: un solo `@graph` cuyos nodos se enlazan por `@id`.
@@ -14,6 +24,7 @@ export function buildHomeJsonLd(): object {
     "@id": id("website"),
     url: HOME,
     name: SITE_NAME,
+    alternateName: ALTERNATE_NAMES,
     inLanguage: "es",
     publisher: { "@id": id("org") },
   };
@@ -22,6 +33,7 @@ export function buildHomeJsonLd(): object {
     "@type": ["WebApplication", "SoftwareApplication"],
     "@id": id("app"),
     name: SITE_NAME,
+    alternateName: ALTERNATE_NAMES,
     url: HOME,
     description: SITE_DESCRIPTION,
     inLanguage: "es",

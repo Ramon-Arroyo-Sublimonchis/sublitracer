@@ -10,7 +10,7 @@ pub fn to_svg(traced: &Traced, precision: Option<u32>) -> String {
     let mut out = String::with_capacity(traced.layers.len() * 256);
     let (w, h) = (traced.width, traced.height);
     let _ = writeln!(out, r#"<?xml version="1.0" encoding="UTF-8"?>"#);
-    let _ = writeln!(out, "<!-- Generado con Sublitracer by Sublimonchis -->");
+    let _ = writeln!(out, "<!-- Generado con VectorizarIA by Sublimonchis -->");
     let _ = writeln!(
         out,
         r#"<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="{w}" height="{h}" viewBox="0 0 {w} {h}">"#

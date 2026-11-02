@@ -14,7 +14,7 @@ const TOKEN = /[MLCZ]|-?\d*\.?\d+(?:e[-+]?\d+)?/gi;
  */
 export function parseTracedSvg(svg: string): VectorDocument {
   const size = SVG_SIZE.exec(svg);
-  if (!size) throw new Error("SVG sin viewBox: no proviene del motor de Sublitracer");
+  if (!size) throw new Error("SVG sin viewBox: no proviene del motor de VectorizarIA");
 
   const paths: VectorPath[] = [];
   for (const match of svg.matchAll(PATH)) {

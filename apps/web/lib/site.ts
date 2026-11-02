@@ -1,9 +1,9 @@
 /** Datos del sitio usados por metadatos, Schema, sitemap y enlaces. */
-export const SITE_ORIGIN = "https://sublitracer.elmundolaser.com";
-export const SITE_NAME = "Sublitracer by Sublimonchis";
+export const SITE_ORIGIN = "https://vectorizaria.elmundolaser.com";
+export const SITE_SHORT_NAME = "VectorizarIA";
+export const SITE_NAME = `${SITE_SHORT_NAME} by Sublimonchis`;
 
-export const SITE_TITLE =
-  "Vectorizar imagen gratis: PNG, JPG y WEBP a SVG, DXF, EPS y PDF | Sublitracer";
+export const SITE_TITLE = `Vectorizar imagen gratis: PNG, JPG y WEBP a SVG, DXF, EPS y PDF | ${SITE_SHORT_NAME}`;
 export const SITE_DESCRIPTION =
   "Vectoriza gratis y sin marca de agua imágenes PNG, JPG y WEBP a SVG, DXF, EPS y PDF listos para corte láser, plotter de vinil, serigrafía y sublimación. Todo se procesa en tu navegador: tus imágenes no se suben a ningún servidor.";
 
@@ -48,7 +48,7 @@ export const AUTHOR = {
     "Diseño gráfico",
     "Desarrollo web",
   ],
-  bio: "Licenciado en Diseño y Comunicación Visual, con más de 15 años como diseñador gráfico, desarrollador web y de comercio electrónico, y más de 13 años de práctica en sublimación, corte de vinil y grabado y corte láser de diodo, CO2 y fibra óptica (MOPA). Calibró el motor de Sublitracer con los problemas reales que ve a diario en talleres de producción: líneas dobles, nodos de más y piezas imposibles de cortar.",
+  bio: "Licenciado en Diseño y Comunicación Visual, con más de 15 años como diseñador gráfico, desarrollador web y de comercio electrónico, y más de 13 años de práctica en sublimación, corte de vinil y grabado y corte láser de diodo, CO2 y fibra óptica (MOPA). Calibró el motor de VectorizarIA con los problemas reales que ve a diario en talleres de producción: líneas dobles, nodos de más y piezas imposibles de cortar.",
   highlights: [
     "Fundador del ecosistema Sublimonchis, con más de 200,000 seguidores en redes sociales",
     "Placa de Plata de YouTube con el canal Sublimonchis Artes Gráficas",

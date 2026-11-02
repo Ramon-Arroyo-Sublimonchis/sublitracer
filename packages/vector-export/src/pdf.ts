@@ -44,7 +44,7 @@ export async function toPdf(doc: VectorDocument, options: ExportOptions = {}): P
       `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${fmt(pageW)} ${fmt(pageH)}] /Resources << >> /Contents 4 0 R >>`,
     ],
     [`<< /Length ${stream.length} /Filter /FlateDecode >>\nstream\n`, stream, "\nendstream"],
-    ["<< /Producer (Sublitracer by Sublimonchis) /Creator (Sublitracer by Sublimonchis) >>"],
+    ["<< /Producer (VectorizarIA by Sublimonchis) /Creator (VectorizarIA by Sublimonchis) >>"],
   ];
 
   const chunks: Uint8Array[] = [];

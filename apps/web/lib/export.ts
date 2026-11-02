@@ -96,5 +96,5 @@ export function downloadBlob(blob: Blob, filename: string) {
 /** "Mi logo final.png" → "Mi logo final" (para nombrar los archivos de salida). */
 export function baseName(filename: string): string {
   const name = filename.replace(/\.[^./\\]+$/, "").trim();
-  return name || "sublitracer";
+  return name || "vectorizaria";
 }

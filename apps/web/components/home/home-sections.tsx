@@ -14,7 +14,7 @@ import {
   HOW_TO,
   SUMMARY,
 } from "@/lib/content/home";
-import { AD_SLOTS, AUTHOR_DISPLAY_NAME } from "@/lib/site";
+import { AD_SLOTS, AUTHOR_DISPLAY_NAME, SITE_NAME, SITE_SHORT_NAME } from "@/lib/site";
 
 /** Secciones de contenido bajo la herramienta (renderizadas en el servidor). */
 export function HomeSections() {
@@ -42,7 +42,7 @@ function SectionTitle({ id, children }: { id: string; children: React.ReactNode 
 function Summary() {
   return (
     <section aria-labelledby="que-es" className="rounded-2xl border bg-card p-6 sm:p-8">
-      <SectionTitle id="que-es">¿Qué es Sublitracer?</SectionTitle>
+      <SectionTitle id="que-es">¿Qué es {SITE_SHORT_NAME}?</SectionTitle>
       <p className="mt-3 max-w-3xl text-pretty leading-relaxed text-muted-foreground">{SUMMARY}</p>
     </section>
   );
@@ -89,7 +89,7 @@ function Comparison() {
   return (
     <section aria-labelledby="comparativa" className="flex flex-col gap-4">
       <SectionTitle id="comparativa">
-        Sublitracer frente a Vectorizer.ai, Vector Magic y PowerTRACE
+        {SITE_NAME} frente a Vectorizer.ai, Vector Magic y PowerTRACE
       </SectionTitle>
       <div className="overflow-x-auto rounded-xl border bg-card">
         <table className="w-full min-w-[720px] border-collapse text-left text-sm">

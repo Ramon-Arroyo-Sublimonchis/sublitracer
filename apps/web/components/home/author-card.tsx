@@ -1,7 +1,7 @@
 import { BadgeCheck, ExternalLink } from "lucide-react";
 import Image from "next/image";
 
-import { AUTHOR, AUTHOR_DISPLAY_NAME } from "@/lib/site";
+import { AUTHOR, AUTHOR_DISPLAY_NAME, SITE_SHORT_NAME } from "@/lib/site";
 
 /** Tarjeta de autoría (E-E-A-T): quién creó y calibró la herramienta, con sus perfiles. */
 export function AuthorCard() {
@@ -20,7 +20,7 @@ export function AuthorCard() {
       <div className="flex min-w-0 flex-col gap-3">
         <div>
           <h2 id="autor" className="text-xl font-bold tracking-tight sm:text-2xl">
-            Quién creó Sublitracer
+            Quién creó {SITE_SHORT_NAME}
           </h2>
           <p className="mt-1 font-semibold">{AUTHOR_DISPLAY_NAME}</p>
           <p className="text-sm text-muted-foreground">{AUTHOR.jobTitle}</p>

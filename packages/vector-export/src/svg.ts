@@ -19,7 +19,7 @@ export function toSvg(doc: VectorDocument, options: ExportOptions = {}): string 
   const stroke = size.drawStyle === "stroke";
   const lines = [
     `<?xml version="1.0" encoding="UTF-8"?>`,
-    `<!-- Generado con Sublitracer by Sublimonchis -->`,
+    `<!-- Generado con VectorizarIA by Sublimonchis -->`,
     `<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="${fmt(size.width)}${unit}" height="${fmt(size.height)}${unit}" viewBox="0 0 ${doc.width} ${doc.height}">`,
   ];
   if (stroke) {

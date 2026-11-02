@@ -1,7 +1,7 @@
 {
   "name": "sublitracer",
   "private": true,
-  "description": "Sublitracer by Sublimonchis: vectorizador de imágenes en el navegador",
+  "description": "VectorizarIA by Sublimonchis: vectorizador de imágenes en el navegador",
   "packageManager": "pnpm@9.15.0",
   "engines": {
     "node": ">=22"

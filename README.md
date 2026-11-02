@@ -1,4 +1,4 @@
-# Sublitracer by Sublimonchis
+# VectorizarIA by Sublimonchis
 
 Vectorizador de imágenes (PNG, JPG, WEBP, BMP, GIF → SVG) que corre 100 % en el navegador.
 El motor está escrito en Rust sobre [visioncortex](https://github.com/visioncortex/visioncortex)

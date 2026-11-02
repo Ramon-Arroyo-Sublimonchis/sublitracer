@@ -1,4 +1,4 @@
-# Sublitracer en SiteGround (Apache). El sitio es estático: no necesita Node.js.
+# VectorizarIA en SiteGround (Apache). El sitio es estático: no necesita Node.js.
 # El HTTPS se fuerza desde Site Tools → Seguridad → SSL → "Forzar HTTPS".
 
 Options -Indexes
