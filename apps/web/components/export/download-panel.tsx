@@ -142,16 +142,6 @@ export function DownloadPanel({
             <RelativeTime since={tracedAt} />
           </p>
         </div>
-        <Button
-          id={buttonId}
-          size="lg"
-          onClick={download}
-          disabled={busy}
-          className="w-full scroll-mt-24 sm:w-auto"
-        >
-          {busy ? <Loader2 className="animate-spin" /> : <Download />}
-          Descargar {format.toUpperCase()}
-        </Button>
       </header>
 
       <fieldset className="flex flex-col gap-3">
@@ -274,6 +264,20 @@ export function DownloadPanel({
           {error}
         </p>
       )}
+
+      {/* Al final del panel: los controles lo separan del anuncio que va arriba. */}
+      <div className="flex justify-end">
+        <Button
+          id={buttonId}
+          size="lg"
+          onClick={download}
+          disabled={busy}
+          className="w-full scroll-mt-24 sm:w-auto"
+        >
+          {busy ? <Loader2 className="animate-spin" /> : <Download />}
+          Descargar {format.toUpperCase()}
+        </Button>
+      </div>
     </section>
   );
 }

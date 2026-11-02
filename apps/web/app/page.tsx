@@ -1,11 +1,12 @@
 import { ShieldCheck } from "lucide-react";
 import Image from "next/image";
 
+import { AdSlot } from "@/components/ads/ad-slot";
 import { HomeSections } from "@/components/home/home-sections";
 import { SiteFooter } from "@/components/home/site-footer";
 import { TracerPlayground } from "@/components/tracer-playground";
 import { buildHomeJsonLd } from "@/lib/seo/schema";
-import { SITE_SHORT_NAME } from "@/lib/site";
+import { AD_SLOTS, SITE_SHORT_NAME } from "@/lib/site";
 
 export default function HomePage() {
   return (
@@ -49,6 +50,13 @@ export default function HomePage() {
               Tus imágenes nunca salen de tu navegador.
             </p>
           </section>
+
+          {/* Solo en pantallas de 768 px o más: en el celular empujaría la herramienta. */}
+          <AdSlot
+            slot={AD_SLOTS.topBanner}
+            format="horizontal"
+            className="mx-auto hidden max-w-[970px] md:flex"
+          />
 
           <TracerPlayground />
           <HomeSections />

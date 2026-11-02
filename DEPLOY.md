@@ -47,7 +47,9 @@ Por FTP/SFTP funciona igual: sube el **contenido** de `apps/web/out`, incluido `
 
 ## 5. Después de publicar
 
-- **AdSense:** agrega el sitio y activa Anuncios automáticos → Anuncios laterales.
+- **AdSense:** agrega el sitio y activa Anuncios automáticos → Anuncios laterales. Para medir por
+  separado el banner superior y el anuncio previo a la descarga, crea un bloque nuevo y pon su ID
+  en `topBanner` (`apps/web/lib/site.ts`); hoy comparten el bloque `4079040541`.
   `https://elmundolaser.com/ads.txt` (dominio principal) debe tener la línea
   `google.com, pub-9446390749680019, DIRECT, f08c47fec0942fa0`.
 - **Search Console:** agrega la propiedad del subdominio (o usa la de dominio),

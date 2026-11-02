@@ -76,12 +76,13 @@ export const AUTHOR_DISPLAY_NAME = `${AUTHOR.honorificPrefix} ${AUTHOR.name}`;
 export const AD_CLIENT = "ca-pub-9446390749680019";
 
 /**
- * Bloques de AdSense por ubicación. Hoy comparten el bloque del proyecto LightBurn to SVG;
+ * Bloques de AdSense por ubicación. `topBanner` y `preDownload` comparten bloque por ahora;
  * conviene crear uno por ubicación en AdSense para medir cada una por separado. Los laterales
  * no son bloques manuales: los pone el formato "Anuncios laterales" de los anuncios automáticos
  * en los márgenes que deja el contenido.
  */
 export const AD_SLOTS = {
-  belowDownload: "7636974134",
+  topBanner: "4079040541",
+  preDownload: "4079040541",
   inArticle: "7636974134",
 } as const;

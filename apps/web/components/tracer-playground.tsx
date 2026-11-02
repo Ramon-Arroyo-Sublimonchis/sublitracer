@@ -37,7 +37,7 @@ const DOWNLOAD_BUTTON_ID = "download-button";
 export function TracerPlayground() {
   const [state, setState] = useState<State>({ status: "idle" });
   const [dragging, setDragging] = useState(false);
-  /** El anuncio bajo la descarga aparece con el primer resultado y queda montado. */
+  /** El anuncio previo a la descarga aparece con el primer resultado y queda montado. */
   const [hasResult, setHasResult] = useState(false);
   const clientRef = useRef<TracerClient | null>(null);
   const urlsRef = useRef<string[]>([]);
@@ -189,28 +189,30 @@ export function TracerPlayground() {
       )}
 
       {state.status === "done" && (
-        <>
-          <dl className="flex flex-wrap justify-center gap-x-6 gap-y-1 text-sm">
-            <Stat label="Formas" value={state.result.pathCount.toLocaleString("es")} />
-            <Stat label="Colores" value={String(state.result.palette.length)} />
-            <Stat label="Tiempo" value={`${state.result.elapsedMs} ms`} />
-          </dl>
-          <DownloadPanel
-            key={state.vectorUrl}
-            result={state.result}
-            doc={state.doc}
-            outline={state.outline}
-            vectorUrl={state.vectorUrl}
-            fileName={state.fileName}
-            tracedAt={state.tracedAt}
-            buttonId={DOWNLOAD_BUTTON_ID}
-          />
-        </>
+        <dl className="flex flex-wrap justify-center gap-x-6 gap-y-1 text-sm">
+          <Stat label="Formas" value={state.result.pathCount.toLocaleString("es")} />
+          <Stat label="Colores" value={String(state.result.palette.length)} />
+          <Stat label="Tiempo" value={`${state.result.elapsedMs} ms`} />
+        </dl>
       )}
 
       {hasResult && (
-        // Separación amplia (40 px) del botón de descarga para evitar clics accidentales.
-        <AdSlot slot={AD_SLOTS.belowDownload} format="rectangle" className="mt-10" />
+        // Antes del panel: sus controles lo separan del botón de descarga y evitan clics
+        // accidentales. Por la misma razón deja 40 px con el visor y con el panel.
+        <AdSlot slot={AD_SLOTS.preDownload} format="auto" className="mx-auto my-4 max-w-[728px]" />
+      )}
+
+      {state.status === "done" && (
+        <DownloadPanel
+          key={state.vectorUrl}
+          result={state.result}
+          doc={state.doc}
+          outline={state.outline}
+          vectorUrl={state.vectorUrl}
+          fileName={state.fileName}
+          tracedAt={state.tracedAt}
+          buttonId={DOWNLOAD_BUTTON_ID}
+        />
       )}
     </div>
   );

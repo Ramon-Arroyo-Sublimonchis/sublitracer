@@ -11,13 +11,19 @@ declare global {
   }
 }
 
-type AdFormat = "rectangle" | "vertical" | "in-article";
+type AdFormat = "auto" | "horizontal" | "in-article";
 
 /** Altura reservada por formato: el anuncio no empuja el contenido al cargar (CLS ≈ 0). */
 const MIN_HEIGHT: Record<AdFormat, number> = {
-  rectangle: 280,
-  vertical: 600,
+  auto: 280,
+  horizontal: 90,
   "in-article": 250,
+};
+
+const DATA_ATTRIBUTES: Record<AdFormat, Record<string, string>> = {
+  auto: { "data-ad-format": "auto", "data-full-width-responsive": "true" },
+  horizontal: { "data-ad-format": "horizontal", "data-full-width-responsive": "false" },
+  "in-article": { "data-ad-format": "fluid", "data-ad-layout": "in-article" },
 };
 
 interface AdSlotProps {
@@ -28,7 +34,7 @@ interface AdSlotProps {
 
 /**
  * Bloque de AdSense con espacio reservado. En localhost no se inicializa (se ve la caja
- * vacía), y tampoco si está oculto (p. ej. el rascacielos en pantallas chicas).
+ * vacía), y tampoco si está oculto (p. ej. el banner horizontal en pantallas chicas).
  */
 export function AdSlot({ slot, format, className }: AdSlotProps) {
   const insRef = useRef<HTMLModElement>(null);
@@ -58,8 +64,12 @@ export function AdSlot({ slot, format, className }: AdSlotProps) {
       <span className="mb-1 text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
         Publicidad
       </span>
+      {/* El formato "auto" puede ocupar todo el ancho del celular: recortarlo lo dejaría cortado. */}
       <div
-        className="flex w-full items-center justify-center overflow-hidden rounded-xl border bg-card/50"
+        className={cn(
+          "flex w-full items-center justify-center rounded-xl border bg-card/50",
+          format !== "auto" && "overflow-hidden",
+        )}
         style={{ minHeight }}
       >
         <ins
@@ -73,10 +83,7 @@ export function AdSlot({ slot, format, className }: AdSlotProps) {
           }}
           data-ad-client={AD_CLIENT}
           data-ad-slot={slot}
-          data-ad-format={inArticle ? "fluid" : format === "vertical" ? "vertical" : "rectangle"}
-          {...(inArticle
-            ? { "data-ad-layout": "in-article" }
-            : { "data-full-width-responsive": "false" })}
+          {...DATA_ATTRIBUTES[format]}
         />
       </div>
     </aside>
