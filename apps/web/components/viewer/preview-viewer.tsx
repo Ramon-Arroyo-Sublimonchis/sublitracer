@@ -17,19 +17,12 @@ interface PreviewViewerProps {
   vector?: { url: string; doc: VectorDocument; outline?: VectorDocument | null };
   tracing: boolean;
   onCancel: () => void;
-  onDownload: () => void;
 }
 
 /** A partir de este zoom el original se ve pixelado, para notar la diferencia con el vector. */
 const PIXELATED_FROM = 2;
 
-export function PreviewViewer({
-  originalUrl,
-  vector,
-  tracing,
-  onCancel,
-  onDownload,
-}: PreviewViewerProps) {
+export function PreviewViewer({ originalUrl, vector, tracing, onCancel }: PreviewViewerProps) {
   const [mode, setMode] = useState<PreviewMode>("compare");
   const [imageSize, setImageSize] = useState<Size | null>(null);
   // Contornos: el del motor (cada frontera una vez); en modo clásico, el de las formas.
@@ -72,7 +65,6 @@ export function PreviewViewer({
         onZoomOut={view.zoomOut}
         onFit={view.fit}
         onActualSize={view.actualSize}
-        onDownload={onDownload}
       />
 
       <section

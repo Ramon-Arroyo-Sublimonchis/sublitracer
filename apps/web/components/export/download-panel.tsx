@@ -58,8 +58,6 @@ interface DownloadPanelProps {
   vectorUrl: string;
   fileName: string;
   tracedAt: number;
-  /** `id` del botón principal, para que la barra del visor pueda llevar el foco hasta aquí. */
-  buttonId?: string;
 }
 
 export function DownloadPanel({
@@ -69,7 +67,6 @@ export function DownloadPanel({
   vectorUrl,
   fileName,
   tracedAt,
-  buttonId,
 }: DownloadPanelProps) {
   const ids = useId();
   const [format, setFormat] = useState<ExportFormat>("svg");
@@ -267,13 +264,7 @@ export function DownloadPanel({
 
       {/* Al final del panel: los controles lo separan del anuncio que va arriba. */}
       <div className="flex justify-end">
-        <Button
-          id={buttonId}
-          size="lg"
-          onClick={download}
-          disabled={busy}
-          className="w-full scroll-mt-24 sm:w-auto"
-        >
+        <Button size="lg" onClick={download} disabled={busy} className="w-full sm:w-auto">
           {busy ? <Loader2 className="animate-spin" /> : <Download />}
           Descargar {format.toUpperCase()}
         </Button>

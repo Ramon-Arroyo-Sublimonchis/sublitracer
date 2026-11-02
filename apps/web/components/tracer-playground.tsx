@@ -28,8 +28,6 @@ type State =
     }
   | { status: "error"; message: string; originalUrl?: string };
 
-const DOWNLOAD_BUTTON_ID = "download-button";
-
 /**
  * Herramienta principal: carga de imagen → worker → WASM → visor y descarga.
  * Ajustes y paleta llegan en las Fases 1–2.
@@ -114,14 +112,6 @@ export function TracerPlayground() {
     setState({ status: "idle" });
   };
 
-  const goToDownload = () => {
-    const button = document.getElementById(DOWNLOAD_BUTTON_ID);
-    if (!button) return;
-    const smooth = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    button.scrollIntoView({ behavior: smooth ? "smooth" : "auto", block: "center" });
-    button.focus({ preventScroll: true });
-  };
-
   const originalUrl = state.status === "idle" ? undefined : state.originalUrl;
 
   return (
@@ -184,7 +174,6 @@ export function TracerPlayground() {
           }
           tracing={state.status === "tracing"}
           onCancel={cancel}
-          onDownload={goToDownload}
         />
       )}
 
@@ -211,7 +200,6 @@ export function TracerPlayground() {
           vectorUrl={state.vectorUrl}
           fileName={state.fileName}
           tracedAt={state.tracedAt}
-          buttonId={DOWNLOAD_BUTTON_ID}
         />
       )}
     </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { Download, Maximize, ZoomIn, ZoomOut } from "lucide-react";
+import { Maximize, ZoomIn, ZoomOut } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -25,7 +25,6 @@ interface PreviewToolbarProps {
   onZoomOut: () => void;
   onFit: () => void;
   onActualSize: () => void;
-  onDownload: () => void;
 }
 
 export function PreviewToolbar(props: PreviewToolbarProps) {
@@ -35,7 +34,7 @@ export function PreviewToolbar(props: PreviewToolbarProps) {
     <div
       role="toolbar"
       aria-label="Previsualización"
-      className="flex flex-wrap items-center gap-x-4 gap-y-2 border-b bg-card px-3 py-2"
+      className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 border-b bg-card px-3 py-3"
     >
       <div className="flex gap-2">
         {MODES.map(({ id, label, title }) => {
@@ -49,7 +48,7 @@ export function PreviewToolbar(props: PreviewToolbarProps) {
               disabled={!hasVector && id !== "compare"}
               onClick={() => props.onModeChange(id)}
               className={cn(
-                "h-9 rounded-lg border bg-background px-3 text-sm font-medium transition-colors sm:px-4",
+                "h-10 rounded-lg border bg-background px-3 text-sm font-medium transition-colors sm:h-11 sm:px-5 sm:text-base",
                 "outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50",
                 active
                   ? "border-primary bg-accent text-primary ring-2 ring-primary/25"
@@ -73,18 +72,14 @@ export function PreviewToolbar(props: PreviewToolbarProps) {
           <Maximize />
         </IconButton>
         <IconButton title="Tamaño real 1:1 (1)" onClick={props.onActualSize}>
-          <span className="rounded-[3px] border-[1.5px] border-current px-0.5 text-[10px] leading-3.5 font-semibold">
+          <span className="rounded-[3px] border-[1.5px] border-current px-0.5 text-xs leading-4 font-semibold">
             1:1
           </span>
         </IconButton>
-        <span className="hidden w-14 text-right text-xs tabular-nums text-muted-foreground sm:inline">
+        <span className="hidden w-14 text-right text-sm tabular-nums text-muted-foreground sm:inline">
           {Math.round(props.zoom * 100)} %
         </span>
       </div>
-
-      <Button className="ml-auto" onClick={props.onDownload} disabled={!hasVector}>
-        <Download /> Descargar
-      </Button>
     </div>
   );
 }
@@ -100,7 +95,7 @@ function IconButton({
       size="icon"
       title={title}
       aria-label={title}
-      className="text-primary hover:text-primary [&_svg:not([class*='size-'])]:size-5"
+      className="size-10 text-primary hover:text-primary sm:size-11 [&_svg:not([class*='size-'])]:size-6"
       {...props}
     >
       {children}
