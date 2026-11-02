@@ -5,4 +5,4 @@ export type { ExportOptions, ResolvedSize, Unit } from "./options";
 export { resolveSize } from "./options";
 export { parseTracedSvg } from "./parse";
 export { toPdf } from "./pdf";
-export { pathData, toOutlineSvg, toSvg } from "./svg";
+export { outlineMargin, pathData, toOutlineSvg, toSvg } from "./svg";

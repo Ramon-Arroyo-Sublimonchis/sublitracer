@@ -1,6 +1,6 @@
 "use client";
 
-import { toOutlineSvg, type VectorDocument } from "@sublitracer/vector-export";
+import { outlineMargin, toOutlineSvg, type VectorDocument } from "@sublitracer/vector-export";
 import { Loader2, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -26,9 +26,8 @@ export function PreviewViewer({ originalUrl, vector, tracing, onCancel }: Previe
   const [mode, setMode] = useState<PreviewMode>("compare");
   const [imageSize, setImageSize] = useState<Size | null>(null);
   // Contornos: el del motor (cada frontera una vez); en modo clásico, el de las formas.
-  const outlineUrl = useOutlineUrl(
-    mode === "outlines" ? (vector?.outline ?? vector?.doc) : undefined,
-  );
+  const outlineDoc = mode === "outlines" ? (vector?.outline ?? vector?.doc) : undefined;
+  const outlineUrl = useOutlineUrl(outlineDoc);
   const view = usePanZoom(imageSize);
   const { transform } = view;
 
@@ -95,7 +94,12 @@ export function PreviewViewer({ originalUrl, vector, tracing, onCancel }: Previe
           light={activeMode === "outlines"}
         >
           {imageSize && mainUrl && !tracing && (
-            <Layer src={mainUrl} size={imageSize} transform={transform} />
+            <Layer
+              src={mainUrl}
+              size={imageSize}
+              transform={transform}
+              margin={activeMode === "outlines" && outlineDoc ? outlineMargin(outlineDoc) : 0}
+            />
           )}
           {tracing && (
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-background/60 text-muted-foreground backdrop-blur-[2px]">
@@ -141,19 +145,23 @@ function Pane({
 
 /**
  * Capa de imagen. El zoom cambia el ancho y alto reales (no `scale`), así el navegador
- * vuelve a dibujar el SVG a la resolución final y se mantiene nítido.
+ * vuelve a dibujar el SVG a la resolución final y se mantiene nítido. `margin` es lo que el
+ * SVG mide de más por cada lado, en píxeles de la imagen: no altera su posición ni su escala.
  */
 function Layer({
   src,
   size,
   transform,
   pixelated = false,
+  margin = 0,
 }: {
   src: string;
   size: Size;
   transform: Transform;
   pixelated?: boolean;
+  margin?: number;
 }) {
+  const offset = margin * transform.zoom;
   return (
     // biome-ignore lint/performance/noImgElement: blob local; next/image no aplica
     <img
@@ -162,9 +170,9 @@ function Layer({
       draggable={false}
       className="pointer-events-none absolute top-0 left-0 max-w-none"
       style={{
-        width: size.width * transform.zoom,
-        height: size.height * transform.zoom,
-        transform: `translate(${transform.x}px, ${transform.y}px)`,
+        width: size.width * transform.zoom + 2 * offset,
+        height: size.height * transform.zoom + 2 * offset,
+        transform: `translate(${transform.x - offset}px, ${transform.y - offset}px)`,
         imageRendering: pixelated ? "pixelated" : "auto",
       }}
     />

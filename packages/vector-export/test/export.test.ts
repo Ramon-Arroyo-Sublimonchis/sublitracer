@@ -6,6 +6,7 @@ import { PDFDocument } from "pdf-lib";
 import { describe, expect, it } from "vitest";
 
 import {
+  outlineMargin,
   parseTracedSvg,
   resolveSize,
   toDxf,
@@ -86,6 +87,12 @@ describe("toOutlineSvg", () => {
     expect(svg.match(/vector-effect="non-scaling-stroke"/g)).toHaveLength(2);
     expect(svg).toContain('fill="none"');
     expect(svg).not.toMatch(/fill="#/);
+  });
+
+  it("deja un margen para que el borde de la imagen no recorte la línea", () => {
+    const margin = outlineMargin(doc);
+    expect(margin).toBe(2);
+    expect(toOutlineSvg(doc)).toContain('width="64" height="44" viewBox="-2 -2 64 44"');
   });
 });
 

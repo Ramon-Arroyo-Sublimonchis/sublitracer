@@ -36,17 +36,26 @@ export function toSvg(doc: VectorDocument, options: ExportOptions = {}): string 
   return lines.join("\n");
 }
 
+/** Margen de la vista de contornos: evita que el borde de la imagen recorte la línea. */
+export function outlineMargin(doc: VectorDocument): number {
+  return Math.max(2, Math.max(doc.width, doc.height) * 0.01);
+}
+
 /**
  * Vista de contornos para el visor: todas las formas sin relleno, con una línea de grosor
- * constante en pantalla (`non-scaling-stroke`), sin importar el zoom.
+ * constante en pantalla (`non-scaling-stroke`), sin importar el zoom. Mide
+ * `outlineMargin(doc)` más por cada lado que el documento.
  */
 export function toOutlineSvg(doc: VectorDocument, color = "#1f2937"): string {
   // `vector-effect` no se hereda: debe ir en cada path.
   const paths = doc.paths.map(
     (path) => `<path d="${pathData(path.segments)}" vector-effect="non-scaling-stroke"/>`,
   );
+  const margin = outlineMargin(doc);
+  const width = doc.width + 2 * margin;
+  const height = doc.height + 2 * margin;
   return [
-    `<svg xmlns="http://www.w3.org/2000/svg" width="${doc.width}" height="${doc.height}" viewBox="0 0 ${doc.width} ${doc.height}">`,
+    `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="${-margin} ${-margin} ${width} ${height}">`,
     `<g fill="none" stroke="${color}" stroke-width="1" stroke-linejoin="round">`,
     ...paths,
     "</g>",

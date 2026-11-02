@@ -16,6 +16,9 @@ use crate::fit::{cross, Cubic, Pt};
 use crate::geometry::{fit_chain, ChainFit, Circle};
 use crate::quantize::TRANSPARENT;
 
+/// Lo más que un círculo completo puede salirse de la imagen (px) para ajustarlo adentro.
+const MAX_CIRCLE_EXCESS: f64 = 0.1;
+
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 enum Dir {
     Right,
@@ -249,28 +252,14 @@ pub fn trace(labels: &[u16], w: usize, h: usize, scale: usize, s: &PlanarSetting
         }
         curves.push(fitted.curves);
     }
-    snap_concentric(&mut curves, &circles, s.fit.tolerance.max(0.5));
+    snap_concentric(&mut curves, &mut circles, s.fit.tolerance.max(0.5));
+    let (ow, oh) = (w / scale, h / scale);
+    keep_circles_inside(&mut curves, &circles, ow as f64, oh as f64);
 
     let hidden = |l: u16| l == TRANSPARENT || s.hidden.contains(&l);
-    let (ow, oh) = (w / scale, h / scale);
     let header = format!(
         "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!-- Generado con VectorizarIA by Sublimonchis -->\n<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" width=\"{ow}\" height=\"{oh}\" viewBox=\"0 0 {ow} {oh}\">\n"
     );
-
-    // ---------- Contorno: cada frontera una sola vez ----------
-    let mut outline = header.clone();
-    for (chain, cubics) in chains.iter().zip(&curves) {
-        if chain.frame || (hidden(chain.left) && hidden(chain.right)) || cubics.is_empty() {
-            continue;
-        }
-        let mut d = String::new();
-        write_curves(&mut d, cubics, true, s.precision);
-        if chain.closed {
-            d.push('Z');
-        }
-        let _ = writeln!(outline, r##"<path d="{d}" fill="none" stroke="#000000"/>"##);
-    }
-    outline.push_str("</svg>\n");
 
     // ---------- Ciclos por etiqueta ----------
     let mut by_label: HashMap<u16, Vec<Use>> = HashMap::new();
@@ -303,6 +292,60 @@ pub fn trace(labels: &[u16], w: usize, h: usize, scale: usize, s: &PlanarSetting
             cycles.push(Cycle { label, uses, area });
         }
     }
+
+    // ---------- Contorno: cada frontera una sola vez, cerrada siempre que se pueda ----------
+    let background = detect_background(labels, w, h);
+    // Sin fondo ni transparencia en el borde (una foto), el marco solo sería un rectángulo.
+    let frame_is_figure = background.is_some() || border_has_transparency(labels, w, h);
+    let mut pending: Vec<bool> = chains
+        .iter()
+        .zip(&curves)
+        .map(|(c, cubics)| {
+            let inside = if c.left == TRANSPARENT {
+                c.right
+            } else {
+                c.left
+            };
+            !cubics.is_empty()
+                && !(hidden(c.left) && hidden(c.right))
+                && (!c.frame || (frame_is_figure && background != Some(inside)))
+        })
+        .collect();
+
+    let mut outline = header.clone();
+    let mut outline_path = |uses: &[Use]| {
+        let mut d = String::new();
+        write_uses(&mut d, &curves, uses, s.precision);
+        let (first, last) = (uses[0], uses[uses.len() - 1]);
+        if use_ends(&chains, first).0 == use_ends(&chains, last).1 {
+            d.push('Z');
+        }
+        let _ = writeln!(outline, r##"<path d="{d}" fill="none" stroke="#000000"/>"##);
+    };
+    for i in 0..chains.len() {
+        if pending[i] && chains[i].closed {
+            pending[i] = false;
+            outline_path(&[Use {
+                chain: i,
+                reversed: false,
+            }]);
+        }
+    }
+    // De mayor a menor: así cierran primero las siluetas, y lo interior va después.
+    let mut by_area: Vec<&Cycle> = cycles.iter().collect();
+    by_area.sort_by(|a, b| b.area.abs().total_cmp(&a.area.abs()));
+    for cycle in by_area {
+        if cycle.uses.iter().all(|u| pending[u.chain]) {
+            for u in &cycle.uses {
+                pending[u.chain] = false;
+            }
+            outline_path(&cycle.uses);
+        }
+    }
+    for trail in join_trails(&chains, &pending) {
+        outline_path(&trail);
+    }
+    outline.push_str("</svg>\n");
 
     // ---------- Relleno ----------
     let mut fill = header;
@@ -396,8 +439,32 @@ pub fn detect_background(labels: &[u16], w: usize, h: usize) -> Option<u16> {
     (label != TRANSPARENT && n * 10 > total * 6).then_some(label)
 }
 
+fn border_has_transparency(labels: &[u16], w: usize, h: usize) -> bool {
+    let row = |y: usize| labels[y * w..(y + 1) * w].contains(&TRANSPARENT);
+    row(0)
+        || row(h - 1)
+        || (0..h).any(|y| labels[y * w] == TRANSPARENT || labels[y * w + w - 1] == TRANSPARENT)
+}
+
+/// Los círculos completos que apenas se salen de la imagen se ajustan para quedar dentro: lo
+/// que sobresale desaparecería en los formatos que recortan a la página, como el PDF.
+fn keep_circles_inside(curves: &mut [Vec<Cubic>], circles: &[(usize, Circle)], w: f64, h: f64) {
+    for &(chain, circle) in circles {
+        let [x, y] = circle.center;
+        let room = x.min(y).min(w - x).min(h - y);
+        let excess = circle.radius - room;
+        if excess > 0.0 && excess <= MAX_CIRCLE_EXCESS {
+            curves[chain] = Circle {
+                radius: room,
+                ..circle
+            }
+            .curves();
+        }
+    }
+}
+
 /// Los círculos completos cuyos centros casi coinciden pasan a compartir el centro exacto.
-fn snap_concentric(curves: &mut [Vec<Cubic>], circles: &[(usize, Circle)], tolerance: f64) {
+fn snap_concentric(curves: &mut [Vec<Cubic>], circles: &mut [(usize, Circle)], tolerance: f64) {
     let mut clusters: Vec<(Pt, Vec<usize>)> = Vec::new();
     for (k, (_, c)) in circles.iter().enumerate() {
         match clusters.iter_mut().find(|(center, _)| {
@@ -417,8 +484,9 @@ fn snap_concentric(curves: &mut [Vec<Cubic>], circles: &[(usize, Circle)], toler
             ]
         });
         for k in members {
+            circles[k].1.center = center;
             let (chain, circle) = circles[k];
-            curves[chain] = Circle { center, ..circle }.curves();
+            curves[chain] = circle.curves();
         }
     }
 }
@@ -499,6 +567,66 @@ fn link_cycles(chains: &[Chain], uses: &[Use]) -> Vec<Vec<Use>> {
     cycles
 }
 
+/// Empalma las cadenas marcadas en `pending` en cada nodo donde solo se juntan dos de ellas.
+/// Donde se juntan tres, cerrar todo obligaría a repetir una línea: ahí terminan las rutas.
+fn join_trails(chains: &[Chain], pending: &[bool]) -> Vec<Vec<Use>> {
+    let mut at_node: HashMap<usize, Vec<usize>> = HashMap::new();
+    for (i, chain) in chains.iter().enumerate().filter(|&(i, _)| pending[i]) {
+        at_node.entry(chain.start).or_default().push(i);
+        at_node.entry(chain.end).or_default().push(i);
+    }
+    let mut used = vec![false; chains.len()];
+    let walk = |first: Use, used: &mut Vec<bool>| {
+        used[first.chain] = true;
+        let mut trail = vec![first];
+        let mut v = use_ends(chains, first).1;
+        while let [a, b] = at_node[&v][..] {
+            let Some(next) = [a, b].into_iter().find(|&c| !used[c]) else {
+                break;
+            };
+            used[next] = true;
+            let u = Use {
+                chain: next,
+                reversed: chains[next].start != v,
+            };
+            trail.push(u);
+            v = use_ends(chains, u).1;
+        }
+        trail
+    };
+
+    let mut trails = Vec::new();
+    // Primero las que parten de una punta o de un cruce; lo que quede forma ciclos.
+    for (i, chain) in chains.iter().enumerate() {
+        if !pending[i] || used[i] {
+            continue;
+        }
+        if at_node[&chain.start].len() != 2 {
+            let first = Use {
+                chain: i,
+                reversed: false,
+            };
+            trails.push(walk(first, &mut used));
+        } else if at_node[&chain.end].len() != 2 {
+            let first = Use {
+                chain: i,
+                reversed: true,
+            };
+            trails.push(walk(first, &mut used));
+        }
+    }
+    for i in 0..chains.len() {
+        if pending[i] && !used[i] {
+            let first = Use {
+                chain: i,
+                reversed: false,
+            };
+            trails.push(walk(first, &mut used));
+        }
+    }
+    trails
+}
+
 /// Área con signo del ciclo (polígono de la rejilla, exacto). Negativa = contorno exterior.
 fn signed_area(chains: &[Chain], uses: &[Use]) -> f64 {
     let pts: Vec<Pt> = uses.iter().flat_map(|&u| use_points(chains, u)).collect();
@@ -534,6 +662,13 @@ fn point_in_cycle(chains: &[Chain], uses: &[Use], p: Pt) -> bool {
 }
 
 fn write_cycle(out: &mut String, curves: &[Vec<Cubic>], uses: &[Use], precision: usize) {
+    if write_uses(out, curves, uses, precision) {
+        out.push('Z');
+    }
+}
+
+/// Escribe las cadenas seguidas, sin cerrar. Devuelve si escribió algo.
+fn write_uses(out: &mut String, curves: &[Vec<Cubic>], uses: &[Use], precision: usize) -> bool {
     let mut first = true;
     for &u in uses {
         let cubics = &curves[u.chain];
@@ -548,9 +683,7 @@ fn write_cycle(out: &mut String, curves: &[Vec<Cubic>], uses: &[Use], precision:
         }
         first = false;
     }
-    if !first {
-        out.push('Z');
-    }
+    !first
 }
 
 fn num(v: f64, precision: usize) -> String {
@@ -645,8 +778,77 @@ mod tests {
     fn outline_has_no_duplicates_and_no_frame() {
         let (l, w, h) = three_regions();
         let out = trace(&l, w, h, 1, &settings(true, 3));
-        // 3 fronteras internas: 0|1, 0|2 y 1|2.
-        assert_eq!(out.outline_svg.matches("<path").count(), 3);
+        // Silueta cerrada (0|1 + 0|2) y la línea interior 1|2, que termina contra ella.
+        let paths: Vec<&str> = out
+            .outline_svg
+            .lines()
+            .filter(|l| l.starts_with("<path"))
+            .collect();
+        assert_eq!(paths.len(), 2, "{paths:?}");
+        assert_eq!(paths.iter().filter(|p| p.contains("Z\"")).count(), 1);
+    }
+
+    #[test]
+    fn a_figure_touching_the_image_border_closes() {
+        // Fondo 0 y una figura 1 que llega al borde izquierdo.
+        let (w, h) = (30, 20);
+        let mut l = vec![0u16; w * h];
+        for y in 5..15 {
+            for x in 0..10 {
+                l[y * w + x] = 1;
+            }
+        }
+        let out = trace(&l, w, h, 1, &settings(true, 2));
+        let paths: Vec<&str> = out
+            .outline_svg
+            .lines()
+            .filter(|l| l.starts_with("<path"))
+            .collect();
+        assert_eq!(paths.len(), 1, "{paths:?}");
+        assert!(paths[0].contains("Z\""), "{}", paths[0]);
+    }
+
+    #[test]
+    fn a_photo_without_background_gets_no_frame_rectangle() {
+        // Dos mitades opacas: ninguna es fondo, y el marco no debe dibujarse.
+        let (w, h) = (20, 20);
+        let l: Vec<u16> = (0..w * h).map(|i| u16::from(i % w >= 10)).collect();
+        let out = trace(&l, w, h, 1, &settings(true, 2));
+        assert_eq!(out.outline_svg.matches("<path").count(), 1);
+    }
+
+    #[test]
+    fn trails_join_where_only_two_chains_meet() {
+        let (l, w, h) = three_regions();
+        let chains = extract_chains(&l, w, h, 1);
+        let is_0_with = |c: &Chain, other: u16| {
+            (c.left, c.right) == (0, other) || (c.left, c.right) == (other, 0)
+        };
+        // Sin la frontera 1|2, las dos que quedan forman una sola ruta que vuelve a su inicio.
+        let pending: Vec<bool> = chains
+            .iter()
+            .map(|c| is_0_with(c, 1) || is_0_with(c, 2))
+            .collect();
+        let trails = join_trails(&chains, &pending);
+        assert_eq!(trails.len(), 1);
+        assert_eq!(trails[0].len(), 2);
+        assert_eq!(
+            use_ends(&chains, trails[0][0]).0,
+            use_ends(&chains, trails[0][1]).1
+        );
+    }
+
+    #[test]
+    fn a_circle_slightly_over_the_border_stays_inside() {
+        let circle = Circle {
+            center: [50.0, 50.0],
+            radius: 50.05,
+            start: 0.0,
+            direction: 1.0,
+        };
+        let mut curves = vec![circle.curves()];
+        keep_circles_inside(&mut curves, &[(0, circle)], 100.0, 100.0);
+        assert!((curves[0][0].0[0][0] - 100.0).abs() < 1e-9);
     }
 
     #[test]
