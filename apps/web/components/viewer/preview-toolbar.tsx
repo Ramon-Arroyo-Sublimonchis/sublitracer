@@ -1,6 +1,6 @@
 "use client";
 
-import { Maximize, ZoomIn, ZoomOut } from "lucide-react";
+import { Maximize, Mouse, ZoomIn, ZoomOut } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -80,6 +80,15 @@ export function PreviewToolbar(props: PreviewToolbarProps) {
           {Math.round(props.zoom * 100)} %
         </span>
       </div>
+
+      <p className="hidden items-center gap-2 text-base font-medium text-primary md:flex">
+        <kbd className="flex h-9 items-center rounded-lg border border-primary bg-accent px-3 font-sans ring-2 ring-primary/25">
+          Ctrl
+        </kbd>
+        +
+        <Mouse className="size-6" aria-hidden />
+        Rueda: zoom
+      </p>
     </div>
   );
 }

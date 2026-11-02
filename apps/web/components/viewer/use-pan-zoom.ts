@@ -100,10 +100,12 @@ export function usePanZoom(image: Size | null) {
     );
   }, [update]);
 
-  // Rueda: zoom hacia el cursor. Necesita un listener no pasivo para poder cancelar el scroll.
+  // Ctrl + rueda: zoom hacia el cursor; sin Ctrl, la página hace scroll normal. Necesita un
+  // listener no pasivo para que el navegador no amplíe toda la página.
   useEffect(() => {
     if (!surface) return;
     const onWheel = (event: WheelEvent) => {
+      if (!event.ctrlKey) return;
       event.preventDefault();
       const unit = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? 400 : 1;
       zoomBy(Math.exp(-event.deltaY * unit * 0.0015), pointInPane(surface, event));

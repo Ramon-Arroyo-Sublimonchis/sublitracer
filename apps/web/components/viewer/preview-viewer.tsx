@@ -69,7 +69,7 @@ export function PreviewViewer({ originalUrl, vector, tracing, onCancel }: Previe
       <section
         {...view.surfaceProps}
         aria-roledescription="lienzo"
-        aria-label="Lienzo: rueda para acercar, arrastra para mover, doble clic para ampliar"
+        aria-label="Lienzo: Ctrl + rueda para acercar, arrastra para mover, doble clic para ampliar"
         className={cn(
           "grid h-[65vh] min-h-90 touch-none gap-px bg-border outline-none select-none focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:ring-inset",
           compare ? "grid-rows-2 md:grid-cols-2 md:grid-rows-1" : "grid-cols-1",
