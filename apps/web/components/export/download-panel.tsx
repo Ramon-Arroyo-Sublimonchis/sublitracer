@@ -21,6 +21,7 @@ import {
 import { useEffect, useId, useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { Segmented } from "@/components/ui/segmented";
 import {
   baseName,
   type DownloadOptions,
@@ -58,6 +59,8 @@ interface DownloadPanelProps {
   vectorUrl: string;
   fileName: string;
   tracedAt: number;
+  /** Mientras se vuelve a trazar: este vector ya no corresponde a los ajustes. */
+  disabled?: boolean;
 }
 
 export function DownloadPanel({
@@ -67,6 +70,7 @@ export function DownloadPanel({
   vectorUrl,
   fileName,
   tracedAt,
+  disabled = false,
 }: DownloadPanelProps) {
   const ids = useId();
   const [format, setFormat] = useState<ExportFormat>("svg");
@@ -264,7 +268,12 @@ export function DownloadPanel({
 
       {/* Al final del panel: los controles lo separan del anuncio que va arriba. */}
       <div className="flex justify-end">
-        <Button size="lg" onClick={download} disabled={busy} className="w-full sm:w-auto">
+        <Button
+          size="lg"
+          onClick={download}
+          disabled={busy || disabled}
+          className="w-full sm:w-auto"
+        >
           {busy ? <Loader2 className="animate-spin" /> : <Download />}
           Descargar {format.toUpperCase()}
         </Button>
@@ -278,44 +287,6 @@ const MM_PER: Record<Unit, number> = { px: 25.4 / 96, mm: 1, in: 25.4 };
 function round(n: number, digits: number) {
   const f = 10 ** digits;
   return Math.round(n * f) / f;
-}
-
-function Segmented<T extends string>({
-  name,
-  value,
-  onChange,
-  options,
-}: {
-  name: string;
-  value: T;
-  onChange: (value: T) => void;
-  options: { value: T; label: string }[];
-}) {
-  return (
-    <div className="inline-flex w-fit flex-wrap rounded-lg border bg-muted p-1">
-      {options.map((option) => (
-        <label
-          key={option.value}
-          className={cn(
-            "cursor-pointer rounded-md px-3 py-1.5 text-sm transition-colors has-[:focus-visible]:ring-[3px] has-[:focus-visible]:ring-ring/50",
-            option.value === value
-              ? "bg-background font-medium shadow-xs"
-              : "text-muted-foreground hover:text-foreground",
-          )}
-        >
-          <input
-            type="radio"
-            name={name}
-            value={option.value}
-            checked={option.value === value}
-            onChange={() => onChange(option.value)}
-            className="sr-only"
-          />
-          {option.label}
-        </label>
-      ))}
-    </div>
-  );
 }
 
 const relative = new Intl.RelativeTimeFormat("es", { numeric: "auto" });
