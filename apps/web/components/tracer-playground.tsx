@@ -246,12 +246,19 @@ export function TracerPlayground() {
         />
       )}
 
-      {state.status === "done" && <TraceSettings value={settings} onChange={retrace} />}
+      {state.status === "done" && (
+        <TraceSettings
+          value={settings}
+          onChange={retrace}
+          palette={state.result.palette}
+          coverage={state.result.coverage}
+          retracing={retracing}
+        />
+      )}
 
       {state.status === "done" && (
         <dl className="flex flex-wrap justify-center gap-x-6 gap-y-1 text-sm">
           <Stat label="Formas" value={state.result.pathCount.toLocaleString("es")} />
-          <Stat label="Colores" value={String(state.result.palette.length)} />
           <Stat label="Tiempo" value={`${state.result.elapsedMs} ms`} />
         </dl>
       )}

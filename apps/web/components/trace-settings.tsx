@@ -4,6 +4,7 @@ import { useId } from "react";
 
 import { Segmented } from "@/components/ui/segmented";
 import type { TraceOptions } from "@/lib/tracer-types";
+import { cn } from "@/lib/utils";
 
 type Detail = NonNullable<TraceOptions["detail"]>;
 
@@ -19,7 +20,10 @@ export function toTraceOptions({ colors, detail }: TraceSettingsValue): TraceOpt
   return colors === null ? { detail } : { colors, detail };
 }
 
-const COLOR_CHOICES = [2, 3, 4, 6, 8, 12];
+const COLOR_CHOICES = [
+  { value: "auto", label: "Auto" },
+  ...[2, 3, 4, 6, 8, 12].map((n) => ({ value: String(n), label: String(n) })),
+];
 
 const DETAIL_CHOICES: { value: Detail; label: string }[] = [
   { value: "low", label: "Bajo" },
@@ -30,49 +34,90 @@ const DETAIL_CHOICES: { value: Detail; label: string }[] = [
 interface TraceSettingsProps {
   value: TraceSettingsValue;
   onChange: (value: TraceSettingsValue) => void;
+  /** Colores del vector actual, de mayor a menor área. */
+  palette: string[];
+  /** Fracción del área de cada color de `palette` (vacío en modo clásico). */
+  coverage: number[];
+  /** Se está trazando con otros ajustes: la muestra va a cambiar. */
+  retracing?: boolean;
 }
 
-export function TraceSettings({ value, onChange }: TraceSettingsProps) {
+export function TraceSettings({
+  value,
+  onChange,
+  palette,
+  coverage,
+  retracing = false,
+}: TraceSettingsProps) {
   const ids = useId();
 
   return (
-    <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
-      <div className="flex items-center gap-2">
-        <label htmlFor={`${ids}-colors`} className="text-sm font-medium">
-          Colores
-        </label>
-        <select
-          id={`${ids}-colors`}
-          value={value.colors ?? "auto"}
-          onChange={(e) =>
-            onChange({
-              ...value,
-              colors: e.target.value === "auto" ? null : Number(e.target.value),
-            })
-          }
-          className="h-9 rounded-md border bg-background px-2 text-sm focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none"
-        >
-          <option value="auto">Auto</option>
-          {COLOR_CHOICES.map((n) => (
-            <option key={n} value={n}>
-              {n}
-            </option>
-          ))}
-        </select>
+    <section
+      aria-labelledby={`${ids}-title`}
+      className="flex flex-col gap-5 rounded-2xl border bg-card p-4 shadow-sm sm:p-6"
+    >
+      <header>
+        <h2 id={`${ids}-title`} className="text-lg font-semibold tracking-tight">
+          Ajustes del trazado
+        </h2>
+        <p className="text-sm text-muted-foreground">
+          Elige cuántos colores y cuánto detalle quieres. El vector se actualiza solo.
+        </p>
+      </header>
+
+      <div className="flex flex-wrap gap-x-8 gap-y-4">
+        <fieldset className="flex flex-col gap-2">
+          <legend className="mb-2 text-sm font-medium">Colores</legend>
+          <Segmented
+            name={`${ids}-colors`}
+            value={value.colors === null ? "auto" : String(value.colors)}
+            onChange={(v) => onChange({ ...value, colors: v === "auto" ? null : Number(v) })}
+            options={COLOR_CHOICES}
+          />
+        </fieldset>
+
+        <fieldset className="flex flex-col gap-2">
+          <legend className="mb-2 text-sm font-medium">Detalle</legend>
+          <Segmented
+            name={`${ids}-detail`}
+            value={value.detail}
+            onChange={(detail) => onChange({ ...value, detail })}
+            options={DETAIL_CHOICES}
+          />
+        </fieldset>
       </div>
 
-      <fieldset className="flex items-center gap-2">
-        <legend className="sr-only">Detalle</legend>
-        <span aria-hidden className="text-sm font-medium">
-          Detalle
-        </span>
-        <Segmented
-          name={`${ids}-detail`}
-          value={value.detail}
-          onChange={(detail) => onChange({ ...value, detail })}
-          options={DETAIL_CHOICES}
-        />
-      </fieldset>
-    </div>
+      <div
+        className={cn(
+          "flex flex-col gap-2 border-t pt-4 transition-opacity",
+          retracing && "opacity-40",
+        )}
+      >
+        <p id={`${ids}-palette`} className="text-sm font-medium">
+          Colores del vector: <span className="tabular-nums">{palette.length}</span>
+        </p>
+        <ul aria-labelledby={`${ids}-palette`} className="flex flex-wrap gap-1.5">
+          {palette.map((color, i) => {
+            const share = coverage[i];
+            const text = share === undefined ? color : `${color} · ${formatShare(share)}`;
+            return (
+              <li key={`${color}-${i}`} title={text}>
+                <span
+                  className="block size-6 rounded-full border border-foreground/20"
+                  style={{ backgroundColor: color }}
+                  aria-hidden
+                />
+                <span className="sr-only">{text}</span>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    </section>
   );
+}
+
+function formatShare(share: number) {
+  const percent = share * 100;
+  return `${percent < 1 ? "<1" : Math.round(percent)} %`;
 }
