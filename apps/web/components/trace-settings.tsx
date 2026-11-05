@@ -56,7 +56,7 @@ export function TraceSettings({
       aria-labelledby={`${ids}-title`}
       className="flex flex-col gap-5 rounded-2xl border bg-card p-4 shadow-sm sm:p-6"
     >
-      <header>
+      <header className="text-center">
         <h2 id={`${ids}-title`} className="text-lg font-semibold tracking-tight">
           Ajustes del trazado
         </h2>
@@ -65,7 +65,7 @@ export function TraceSettings({
         </p>
       </header>
 
-      <div className="flex flex-wrap gap-x-8 gap-y-4">
+      <div className="flex flex-wrap justify-center gap-x-10 gap-y-5">
         <fieldset className="flex flex-col gap-2">
           <legend className="mb-2 text-sm font-medium">Colores</legend>
           <Segmented
@@ -85,33 +85,38 @@ export function TraceSettings({
             options={DETAIL_CHOICES}
           />
         </fieldset>
-      </div>
 
-      <div
-        className={cn(
-          "flex flex-col gap-2 border-t pt-4 transition-opacity",
-          retracing && "opacity-40",
-        )}
-      >
-        <p id={`${ids}-palette`} className="text-sm font-medium">
-          Colores del vector: <span className="tabular-nums">{palette.length}</span>
-        </p>
-        <ul aria-labelledby={`${ids}-palette`} className="flex flex-wrap gap-1.5">
-          {palette.map((color, i) => {
-            const share = coverage[i];
-            const text = share === undefined ? color : `${color} · ${formatShare(share)}`;
-            return (
-              <li key={`${color}-${i}`} title={text}>
-                <span
-                  className="block size-6 rounded-full border border-foreground/20"
-                  style={{ backgroundColor: color }}
-                  aria-hidden
-                />
-                <span className="sr-only">{text}</span>
-              </li>
-            );
-          })}
-        </ul>
+        {/* Con muchos colores, la muestra baja de renglón en vez de ensanchar la fila. */}
+        <div
+          className={cn(
+            "flex min-w-0 max-w-md flex-col gap-2 transition-opacity",
+            retracing && "opacity-40",
+          )}
+        >
+          <p id={`${ids}-palette`} className="text-sm font-medium">
+            Colores del vector: <span className="tabular-nums">{palette.length}</span>
+          </p>
+          {/* Misma altura que los botones, para que los círculos queden alineados con ellos. */}
+          <ul
+            aria-labelledby={`${ids}-palette`}
+            className="flex min-h-[42px] flex-wrap items-center gap-2"
+          >
+            {palette.map((color, i) => {
+              const share = coverage[i];
+              const text = share === undefined ? color : `${color} · ${formatShare(share)}`;
+              return (
+                <li key={color} title={text}>
+                  <span
+                    className="block size-8 rounded-full border border-foreground/20 shadow-xs"
+                    style={{ backgroundColor: color }}
+                    aria-hidden
+                  />
+                  <span className="sr-only">{text}</span>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
       </div>
     </section>
   );
